@@ -1,0 +1,11 @@
+#galaxy-title{position:fixed;top:max(72px,12vh);left:20px;right:20px;margin:0;text-align:center;font:400 clamp(20px,3.4vw,42px) 'Delius',cursive;color:#fff5a8;text-shadow:0 0 10px #edce47,0 0 30px #c79420;pointer-events:none}#start::before{filter:drop-shadow(0 0 25px #ffdc59aa)}@media(max-width:600px){#galaxy-title{top:90px;font-size:23px}}@media(max-height:440px){#galaxy-title{top:65px;font-size:22px}}body[data-scene="galaxy"] canvas{touch-action:none;cursor:grab}body[data-scene="galaxy"] canvas.dragging{cursor:grabbing}
+.camera-tools{display:flex;justify-content:center;align-items:center;gap:8px;pointer-events:auto;flex-wrap:wrap}
+.camera-tools button{min-width:44px;min-height:44px;border:1px solid #e5cc6240;border-radius:24px;background:#080905c9;color:#f3dfa1;padding:10px 14px;cursor:pointer;font:12px system-ui,sans-serif}
+#zoom-in,#zoom-out{font-size:22px;padding:5px 12px}#zoom-value{font:12px system-ui,sans-serif;color:#fff0b7;min-width:42px}
+.camera-hint{display:block;margin-top:9px;font:11px system-ui,sans-serif;color:#cbbd8e;text-shadow:0 1px 5px #000}
+.traveling #controls{opacity:.85}
+@media(max-width:450px){.camera-tools{gap:5px}.camera-tools button{padding:8px 10px}.camera-hint{font-size:10px}#controls{left:8px;right:8px}}
+@media(max-height:440px){.camera-hint{display:none}}
+/* The galaxy entrance uses its own illustration, not the journey sunflower. */
+#start::before{background-image:url('portada.svg');width:clamp(190px,38vw,350px);height:clamp(120px,29dvh,215px);filter:drop-shadow(0 0 20px #e3b54455)}
+@media(max-height:440px){#start::before{width:170px;height:100px}}

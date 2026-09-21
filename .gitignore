@@ -1,0 +1,5 @@
+referencia-*.jpg
+*.mp4
+.DS_Store
+Thumbs.db
+.claude/
