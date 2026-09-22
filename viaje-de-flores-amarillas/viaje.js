@@ -3,7 +3,9 @@ const ctx = canvas.getContext('2d', { alpha: false });
 const music = document.querySelector('#music');
 const sound = document.querySelector('#sound');
 const pause = document.querySelector('#pause');
+// Reduced-motion preference slows the journey instead of freezing it: the motion is the gift.
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const MOTION = reduced ? .5 : 1;
 const phrases = ['Flores para ti', 'Mi persona favorita', 'Contigo el tiempo\nse vuelve eterno', 'Gracias por existir', 'Eres luz\naun de noche', 'El infinito cabe\nen tu sonrisa', 'Te elegiría\nmil veces más', 'Todo lo que busco\nya está en ti', 'Feliz día ☀', 'Mi lugar favorito\nes contigo', 'Coincidir contigo\nfue mi destino', 'Tú haces florecer\nmis días', 'Amar es elegir,\ny te elijo a ti', 'Lo eterno también\ncabe en un instante', 'Mi universo\ntiene tu nombre', 'Amarte es mi\nverdad más simple', 'Donde estés tú,\nestá mi hogar', 'Un abrazo\nhecho de flores', 'Siempre tú', 'Te mereces\ntodas las flores', 'Me encantas', 'Tu sonrisa es mi sol', 'Eres mi alegría', 'Cada día contigo\nes primavera', 'Lo mejor de mí\nnació contigo', 'Que este amor\nno se marchite', 'Tu voz es mi\nlugar seguro', 'Eres pura luz', 'Por siempre'];
 const galaxyMode = document.body.dataset.scene === 'galaxy';
 const sceneLabel = galaxyMode ? 'galaxia' : 'viaje';
@@ -37,7 +39,7 @@ function buildCoreGlow(){
  g.fillStyle='#020201';g.strokeStyle='#ffe18c';g.lineWidth=2;g.beginPath();g.arc(180,180,142,0,Math.PI*2);g.fill();g.stroke();
 }
 function drawBlackHole(cx,cy){
- const t=reduced?0:elapsed;
+ const t=elapsed*MOTION;
  const size=Math.min(width*.88,height*1.2)*view.zoom,scale=size/1000;
  const beat=1+.045*Math.sin(t*2.4)+.015*Math.sin(t*4.8);
  ctx.save();ctx.translate(cx,cy);ctx.rotate(-.1+Math.sin(t*.27)*.055);
@@ -73,7 +75,7 @@ function draw(dt){
  ctx.drawImage(haze,cx-width*.5,cy-height*.43,width,height*.86);
  if(!started)return;
  if(galaxyMode)drawBlackHole(cx-camera.x*lens/1100,cy-camera.y*lens/1100);
- const travel=dt*TRAVEL_SPEED*(galaxyMode?.48:1);
+ const travel=dt*TRAVEL_SPEED*MOTION*(galaxyMode?.48:1);
  ctx.lineWidth=.65;
  for(const star of streaks){star.z-=travel;if(star.z<60)star.z+=DEPTH;const s=lens/star.z,t=lens/(star.z+star.length);const x=cx+(star.x-camera.x)*s,y=cy+(star.y-camera.y)*s;if(x<0||x>width||y<0||y>height)continue;ctx.strokeStyle="#f4e29a";ctx.globalAlpha=Math.min(.65,300/star.z);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(cx+(star.x-camera.x)*t,cy+(star.y-camera.y)*t);ctx.stroke();}
  ctx.globalAlpha=1;
@@ -90,10 +92,10 @@ function setRunning(value){running=value;last=0;cancelAnimationFrame(animation);
 function updateSound(){sound.textContent=music.paused?'Música: apagada':'Música: encendida';sound.setAttribute('aria-label',music.paused?'Activar música':'Desactivar música');}
 function playMusic(){music.play().then(updateSound).catch(updateSound);}
 const start=document.querySelector('#start');
-start.addEventListener('click',()=>{started=true;document.querySelector('#welcome').hidden=true;document.querySelector('#controls').hidden=false;sound.hidden=false;document.body.classList.add('traveling');if(galaxyMode)document.querySelector('#galaxy-title').hidden=false;playMusic();setRunning(!reduced);draw(0);pause.focus({preventScroll:true});});
+start.addEventListener('click',()=>{started=true;document.querySelector('#welcome').hidden=true;document.querySelector('#controls').hidden=false;sound.hidden=false;document.body.classList.add('traveling');if(galaxyMode)document.querySelector('#galaxy-title').hidden=false;playMusic();setRunning(true);draw(0);pause.focus({preventScroll:true});});
 for(const event of ['play','pause','error'])music.addEventListener(event,updateSound);
  sound.addEventListener('click',()=>{if(music.paused)playMusic();else music.pause();});pause.addEventListener('click',()=>setRunning(!running));
-addEventListener('pointermove',e=>{if(!galaxyMode&&!reduced)pointer={x:e.clientX/width-.5,y:e.clientY/height-.5};});
+addEventListener('pointermove',e=>{if(!galaxyMode)pointer={x:e.clientX/width-.5,y:e.clientY/height-.5};});
 addEventListener('resize',resize);
 let resume=false;document.addEventListener('visibilitychange',()=>{if(document.hidden){resume=running;setRunning(false);}else if(resume){setRunning(true);resume=false;}});
 if(galaxyMode){buildBlackHole();buildCoreGlow();}buildSprites();resize();document.fonts.ready.then(()=>{buildSprites();if(!running)draw(0);});
